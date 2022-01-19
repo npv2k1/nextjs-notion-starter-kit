@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { useSearchParam } from 'react-use'
 import BodyClassName from 'react-body-classname'
 import useDarkMode from 'use-dark-mode'
-import { PageBlock } from 'notion-types'
+import { Block, PageBlock } from 'notion-types'
 
 import { Tweet, TwitterContextProvider } from 'react-static-tweets'
 
@@ -32,7 +32,6 @@ import { PageHead } from './PageHead'
 import { PageActions } from './PageActions'
 import { Footer } from './Footer'
 import { PageSocial } from './PageSocial'
-import { GitHubShareButton } from './GitHubShareButton'
 import { ReactUtterances } from './ReactUtterances'
 
 import styles from './styles.module.css'
@@ -58,6 +57,13 @@ import styles from './styles.module.css'
 //   () => import('react-notion-x').then((notion) => notion.Pdf),
 //   { ssr: false }
 // )
+
+// const Pdf = (props)=>{
+//   console.log("PDF props", props)
+//   return <>
+//   This is a pdf file.
+//   </>
+// }
 
 const Equation = dynamic(() =>
   import('react-notion-x').then((notion) => notion.Equation)
@@ -95,7 +101,7 @@ export const NotionPage: React.FC<types.PageProps> = ({
   }
 
   const keys = Object.keys(recordMap?.block || {})
-  const block = recordMap?.block?.[keys[0]]?.value
+  const block:Block = recordMap?.block?.[keys[0]]?.value
 
   if (error || !site || !keys.length || !block) {
     return <Page404 site={site} pageId={pageId} error={error} />
@@ -140,41 +146,10 @@ export const NotionPage: React.FC<types.PageProps> = ({
     getPageDescription(block, recordMap) ?? config.description
 
   let comments: React.ReactNode = null
-  let pageAside: React.ReactChild = null
-
-  // only display comments and page actions on blog post pages
-  if (isBlogPost) {
-    if (config.utterancesGitHubRepo) {
-      comments = (
-        <ReactUtterances
-          repo={config.utterancesGitHubRepo}
-          issueMap='issue-term'
-          issueTerm='title'
-          theme={darkMode.value ? 'photon-dark' : 'github-light'}
-        />
-      )
-    }
-
-    const tweet = getPageTweet(block, recordMap)
-    if (tweet) {
-      pageAside = <PageActions tweet={tweet} />
-    }
-  } else {
-    pageAside = <PageSocial />
-  }
 
   return (
-    <TwitterContextProvider
-      value={{
-        tweetAstMap: (recordMap as any).tweetAstMap || {},
-        swrOptions: {
-          fetcher: (id) =>
-            fetch(`/api/get-tweet-ast/${id}`).then((r) => r.json())
-        }
-      }}
-    >
+    <>
       <PageHead site={site} />
-
       <Head>
         <meta property='og:title' content={title} />
         <meta property='og:site_name' content={site.name} />
@@ -252,7 +227,6 @@ export const NotionPage: React.FC<types.PageProps> = ({
           code: Code,
           collection: Collection,
           collectionRow: CollectionRow,
-          tweet: Tweet,
           modal: Modal,
           equation: Equation
         }}
@@ -271,7 +245,6 @@ export const NotionPage: React.FC<types.PageProps> = ({
         mapImageUrl={mapNotionImageUrl}
         searchNotion={searchNotion}
         pageFooter={comments}
-        pageAside={pageAside}
         footer={
           <Footer
             isDarkMode={darkMode.value}
@@ -279,8 +252,6 @@ export const NotionPage: React.FC<types.PageProps> = ({
           />
         }
       />
-
-      <GitHubShareButton />
-    </TwitterContextProvider>
+    </>
   )
 }
