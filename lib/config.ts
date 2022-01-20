@@ -106,8 +106,7 @@ export const apiBaseUrl = `${host}/api`
 
 export const api = {
   createPreviewImage: `${apiBaseUrl}/create-preview-image`,
-  searchNotion:
-    process.env.NEXT_PUBLIC_SEARCH_API || `${apiBaseUrl}/search-notion`
+  searchNotion: 'https://jem0jt.deta.dev/search-notion'
 }
 
 // ----------------------------------------------------------------------------
