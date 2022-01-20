@@ -17,10 +17,5 @@ export default async (req: NextApiRequest, res: NextApiResponse) => {
     'Cache-Control',
     'public, s-maxage=60, max-age=60, stale-while-revalidate=60'
   )
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept'
-  )
   res.status(200).json(results)
 }
