@@ -106,7 +106,7 @@ export const apiBaseUrl = `${host}/api`
 
 export const api = {
   createPreviewImage: `${apiBaseUrl}/create-preview-image`,
-  searchNotion: `${apiBaseUrl}/search-notion`
+  searchNotion: process.env.SEARCH_API || `${apiBaseUrl}/search-notion`
 }
 
 // ----------------------------------------------------------------------------
